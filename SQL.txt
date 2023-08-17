@@ -1,0 +1,383 @@
+
+--select inicial
+SELECT*
+FROM Person.Person;
+
+SELECT Title 
+FROM  person.Person;
+
+SELECT * 
+FROM person.EmailAddress
+
+select FirstName, LastName
+from person.Person;
+--select com distinct
+select distinct FirstName
+from person.Person;
+
+select distinct LastName
+from person.Person;
+
+--select com where
+SELECT * 
+FROM person.Person
+WHERE LastName = 'miller' and FirstName = 'anna'
+
+SELECT * 
+FROM production.Product
+WHERE ListPrice > 1500 and ListPrice  < 5000
+
+SELECT * 
+FROM production.Product
+WHERE color <> 'red'
+
+SELECT Name
+FROM production.Product
+WHERE Weight > '500' AND Weight <= '700'
+
+SELECT * 
+FROM HumanResources.Employee
+WHERE MaritalStatus = 'm' and SalariedFlag = 1
+
+SELECT * 
+FROM person.Person
+WHERE FirstName = 'peter' and LastName = 'krebs'
+
+SELECT * 
+FROM person.EmailAddress
+WHERE BusinessEntityID = 26
+
+--SELECT COM COUNT 
+SELECT count(*)  
+FROM person.Person
+
+
+SELECT count( DISTINCT Title)  
+FROM person.Person
+
+ SELECT count(*) 
+ FROM production.Product
+
+ SELECT count(Size) 
+ FROM production.Product
+
+ SELECT TOP 100 *
+ FROM production.Product
+
+ --ORDER BY 
+
+ SELECT FirstName,LastName,MiddleName 
+ FROM Person.Person
+ ORDER BY FirstName asc,LastName desc 
+
+ SELECT FirstName,LastName,MiddleName 
+ FROM Person.Person
+ ORDER BY MiddleName asc 
+
+SELECT TOP 10 ProductID
+FROM Production.Product
+ORDER BY ListPrice DESC
+
+SELECT TOP 4 name,ProductNumber
+FROM Production.Product
+ORDER BY ProductID asc
+ 
+ -- between 
+
+SELECT * 
+FROM Production.Product 
+WHERE ListPrice between 1000 and 1500;
+
+SELECT * 
+FROM HumanResources.Employee
+WHERE HireDate between '2009/01/01' and '2010/01/01'
+ORDER BY HireDate
+
+--in 
+
+SELECT * 
+FROM Person.Person
+WHERE BusinessEntityID IN (2,7,13)
+--WHERE BusinessEntityID NOT IN (2,7,13)
+
+
+--LIKE
+
+SELECT * 
+FROM Person.Person
+WHERE FirstName like '%ro_'
+
+/*
+1 quantos produtos temos cadastrados no sistemas que custam
+mais de 1500 dolares
+*/
+SELECT count(ListPrice)
+FROM Production.Product 
+WHERE ListPrice > 1500
+/*
+2- quantas pessoas temos com o sobrenome que inicia com letra P
+*/
+
+SELECT count(LastName) 
+FROM person.Person 
+WHERE LastName LIKE 'p%'
+/*
+3- em quantas cidades unicas estao cadastratados nossos clintes
+*/
+SELECT count(distinct(city))
+FROM person.Address
+
+/*
+4- Quais sao as cidades unicas que temos cadastrados em nosso sistemas
+*/
+
+SELECT distinct(City) 
+FROM Person.Address
+
+/*
+5- quantos produtos vermelhos tem preço entre 500 a 1000 dolares 
+*/
+
+SELECT  ListPrice, color 
+FROM production.Product
+WHERE ListPrice between 500 and 1000 and color = 'red' 
+
+/*
+6- quantos produtos cadastrados tem a palavra 'road' no nome deles 
+*/
+
+SELECT count(*) 
+FROM Production.Product
+WHERE Name LIKE '%road%'
+
+--MIN, MAX,SUM,AVG
+
+SELECT TOP 10 sum(linetotal)
+FROM Sales.SalesOrderDetail
+
+SELECT TOP 10 sum(linetotal) as "soma"
+FROM Sales.SalesOrderDetail
+
+SELECT TOP 10 min(Linetotal)
+FROM Sales.SalesOrderDetail
+
+SELECT TOP 10 max(Linetotal)
+FROM Sales.SalesOrderDetail
+
+SELECT TOP 10 avg(Linetotal)
+FROM Sales.SalesOrderDetail
+
+--group by 
+/*
+SELECT coluna1,funcaoagregaçao(coluna2)
+FROM nomeTabela
+group by coluna1
+*/
+
+SELECT * 
+FROM Sales.SalesOrderDetail
+
+SELECT SpecialOfferID, SUM(UnitPrice) AS "SOMA"
+FROM Sales.SalesOrderDetail
+GROUP BY SpecialOfferID
+
+SELECT SpecialOfferID 
+FROM Sales.SalesOrderDetail
+WHERE SpecialOfferID = 9
+
+SELECT * FROM Sales.SalesOrderDetail
+
+SELECT ProductID, COUNT(ProductID) AS "CONTAGEM" 
+FROM Sales.SalesOrderDetail
+GROUP BY ProductID
+
+SELECT FirstName,count(FirstName) AS "CONTAGEM"
+FROM Person.Person
+GROUP BY FirstName
+
+SELECT AVG(Listprice)
+FROM Production.Product
+WHERE COLOR = 'silver'
+GROUP BY color 
+
+
+/*
+1- Eu preciso saber quantas pessoas tem o mesmo middlename agrupadas
+por o midlename 
+*/
+
+SELECT MiddleName, count(MiddleName) as "quantidade"
+FROM Person.Person
+GROUP BY MiddleName
+
+SELECT ProductID, avg(OrderQty) "media"
+FROM Sales.SalesOrderDetail
+GROUP BY ProductID
+
+SELECT TOP 10 ProductID , SUM(LineTotal)
+FROM Sales.SalesOrderDetail
+GROUP BY ProductID
+ORDER BY SUM(LineTotal) DESC;
+
+SELECT ProductID,count(ProductID) "contagem",
+AVG(orderqty) as "media"
+FROM production.workorder
+GROUP BY productID 
+
+
+--having
+
+/*
+SELECT coluna1 ,funcaoAgregaçao(coluna2)
+FROM nomeTabela
+GROUP BY coluna1
+HAVING condicao;
+*/
+
+select FirstName, count(FirstName) AS "quantidade"
+from Person.Person
+group by FirstName 
+having count (FirstName) > 10
+
+SELECT TOP 10* 
+FROM Sales.SalesOrderDetail
+
+SELECT ProductID,sum(linetotal) as "TOTAL" 
+FROM Sales.SalesOrderDetail
+GROUP BY ProductID
+HAVING SUM (LineTotal) between 162000 and 500000
+
+SELECT FirstName,count (FirstName) as "quantidade"
+FROM Person.Person
+WHERE Title = '	Mr.'
+GROUP BY FirstName 
+HAVING count (firstname) > 10
+
+SELECT StateProvinceID, count (StateProvinceID) AS "quantidade"
+FROM Person.Address
+GROUP BY StateProvinceID 
+HAVING COUNT (StateProvinceID) > 1000
+
+SELECT productID ,avg (LineTotal) as "total" 
+FROM Sales.SalesOrderDetail
+GROUP BY ProductID
+HAVING AVG (ProductID) < 1000000
+
+--as 
+SELECT TOP 10 ListPrice as "Preço do produto"
+FROM Production.Product
+
+SELECT top 10 FirstName as nome, LastName as sobrenome 
+FROM Person.Person
+
+SELECT top 10 ProductNumber as "Numero do Produto"
+from Production.Product
+
+SELECT UnitPrice as "preço unitario" 
+FROM Sales.SalesOrderDetail
+
+--INNER JOIN
+/*
+SELECT C.ClienteId,C.Nome,E,Rua,E,Cidade
+FROM Cliente C
+INNER JOIN Endereco E ON E.enderecoId = C.EnderecoId
+*/
+
+SELECT top 10 *
+FROM Person.Person
+
+SELECT top 10 *
+FROM Person.Person
+
+SELECT p.BusinessEntityID,p.FirstName,p.LastName,pe.EmailAddress
+FROM Person.Person AS P 
+INNER JOIN Person.EmailAddress PE on p.BusinessEntityID = pe.BusinessEntityID
+
+SELECT TOP 10 * 
+FROM Production.Product
+
+SELECT TOP 10 *
+FROM Production.Product
+
+SELECT  pr.ListPrice,pr.Name,pc.name
+FROM Production.Product Pr
+INNER JOIN Production.ProductSubcategory PC on PC.ProductSubcategoryID =
+pr.ProductSubcategoryID
+
+SELECT TOP 10 * 
+FROM Person.BusinessEntityAddress
+
+SELECT TOP 10 *
+FROM Person.Address
+
+SELECT TOP 10 *
+FROM Person.BusinessEntityAddress BA
+INNER JOIN Person.Address PA ON PA.AddressID = BA.AddressID 
+
+--HORA DO DESAFIO 
+
+SELECT TOP 10 * 
+FROM Person.PhoneNumberType
+
+SELECT TOP 10 * 
+FROM Person.PersonPhone
+
+SELECT pp.BusinessEntityID,pt.name,pt.PhoneNumberTypeId,pp.PhoneNumber 
+FROM Person.PersonPhone PP
+INNER JOIN Person.PhoneNumberType PT ON PT.PhoneNumberTypeID = pp.PhoneNumberTypeID
+
+SELECT TOP 10 * 
+FROM Person.StateProvince
+
+SELECT TOP 10 * 
+FROM Person.Address
+
+SELECT  p.AddressID, p.City, p.StateProvinceID
+FROM Person.Address PA
+INNER JOIN Person.StateProvince PC ON PC.Person.StateProvince = 
+Person.Address
+
+
+SELECT TOP 10 * PA.AddressID, PA.City, PS.StateProvinceID,PS.Name
+FROM Person.Address PA
+INNER JOIN Person.StateProvince PS ON PS.StateProvinceID = PA.StateProvinceID
+
+
+
+-- FULL OUTER JOIN 
+*/*
+SELECT * FROM TabelaA 
+FULL OUTER JOIN TabelaB 
+ON TabelaA.nome = TabelaB.nome
+*/
+
+--LEFT OUTER JOIN 
+/*
+SELECT * FROM TabelaB
+LEFT JOIN TabelaB
+ON TabelaA.nome =TabelaB.nome
+
+--FULL OUTER JOIN 
+/*
+SELECT * FROM TabelaA 
+FULL OUTER JOIN TabelaB
+ON TabelaA.nome = TabelaB.nome
+*/
+*/*
+
+SELECT * 
+FROM Person.Person PP
+INNER JOIN Sales.PersonCreditCard PC 
+ON PP.BusinessEntityID = PC.BusinessEntityID
+
+SELECT * 
+FROM Person.Person PP
+LEFT JOIN Sales.PersonCreditCard PC 
+ON PP.BusinessEntityID = PC.BusinessEntityID
+WHERE PC.BusinessEntityID IS NULL 
+
+--INNER JOIN 19118
+--LEFT JOIN 19972
+
+
+
