@@ -1,0 +1,65 @@
+CREATE TABLE tbSaldos
+(
+   Produto varchar (10),
+   saldo_inicial numeric (10),
+   saldo_final numeric(10),
+   data_ult_mov datetime
+);
+go
+
+insert into tbSaldos (Produto,saldo_inicial, saldo_final,data_ult_mov)
+values ('Produto A',0, 100, getdate ());
+go
+
+
+CREATE TABLE tbVendas 
+(
+   id_vendas int,
+   produto varchar (10),
+   quantidade int,
+   data datetime
+);
+go
+
+CREATE SEQUENCE seq_tbVendas 
+as numeric
+start with 1
+increment by 1;
+
+
+CREATE TABLE tbHistoricoVendas 
+(
+   produto varchar(10),
+   quantidade int,
+   data_venda datetime
+);
+go
+
+CREATE TRIGGER trg_ajustaSaldo
+on tbVendas
+for insert 
+as begin 
+      declare @quantidade int ,
+	          @data       datetime,
+			  @produto    varchar (10)
+
+select @data = data, @quantidade = quantidade, @produto = produto 
+from inserted
+
+update tbSaldos
+set saldo_final = saldo_final - @quantidade,
+data_ult_mov = @data
+where Produto = @produto;
+
+insert into tbHistoricoVendas (produto,quantidade,data_venda)
+values (@produto,@quantidade,@data);
+
+end 
+go
+
+insert into tbVendas(id_vendas, produto, quantidade, data)
+values (next value for seq_tbVendas,'Produto A',11, getdate());
+
+select * from tbHistoricoVendas
+select * from tbSaldos
+select * from tbVendas
